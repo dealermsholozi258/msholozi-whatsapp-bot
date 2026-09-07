@@ -76,7 +76,7 @@ def webhook():
         return jsonify({"status": "success"}), 200
 
 def enviar_mensagem_whatsapp(to_number, text):
-    # Garante que o número não contém o caractere '+' para a API da Meta
+    # Remove o '+' e quaisquer espaços do número do destinatário
     clean_number = str(to_number).replace("+", "").strip()
     
     url = f"https://graph.facebook.com/v18.0/{PHONE_NUMBER_ID}/messages"
