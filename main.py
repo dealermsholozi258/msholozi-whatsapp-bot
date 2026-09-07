@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
+# Leitura das variáveis de ambiente configuradas no Render
 VERIFY_TOKEN = os.environ.get("VERIFY_TOKEN", "")
 ACCESS_TOKEN = os.environ.get("WHATSAPP_TOKEN", "")
 PHONE_NUMBER_ID = os.environ.get("PHONE_NUMBER_ID", "1292096300643433")
@@ -47,7 +48,7 @@ def webhook():
 
                 print(f"Mensagem de {from_number}: {msg_body}")
 
-                if msg_body in ["1", "menu", "olá", "ola"]:
+                if msg_body in ["1", "menu", "olá", "ola", "boa noite", "bom dia", "boa tarde"]:
                     resposta = (
                         "👋 *Bem-vindo à Loja de Pacotes de MB!*\n\n"
                         "Escolha uma das opções enviando o número:\n"
@@ -75,6 +76,9 @@ def webhook():
         return jsonify({"status": "success"}), 200
 
 def enviar_mensagem_whatsapp(to_number, text):
+    # Garante que o número não contém o caractere '+' para a API da Meta
+    clean_number = str(to_number).replace("+", "").strip()
+    
     url = f"https://graph.facebook.com/v18.0/{PHONE_NUMBER_ID}/messages"
     
     headers = {
@@ -84,7 +88,7 @@ def enviar_mensagem_whatsapp(to_number, text):
     
     payload = {
         "messaging_product": "whatsapp",
-        "to": to_number,
+        "to": clean_number,
         "type": "text",
         "text": {"body": text}
     }
