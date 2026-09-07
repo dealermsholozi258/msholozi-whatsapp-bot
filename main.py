@@ -88,17 +88,9 @@ def webhook():
                         "Digite *1* ou *menu* para ver os nossos pacotes de MB disponíveis."
                     )
 
-                enviar_mensagem_whatsapp(from_number, resposta)
-
-        except Exception as e:
-            print(f"Erro ao processar evento de mensagem: {e}")
-
-        # Retorna HTTP 200 confirmando recepção
-        return jsonify({"status": "success"}), 200
-
-def enviar_mensagem_whatsapp(to_number, text):
-    """Envia a mensagem para o número do cliente usando a Graph API da Meta"""
-    url = f"https://graph.facebook.com/{GRAPH_API_VERSION}/{PHONE_NUMBER_ID}/messages"
+                def enviar_mensagem_whatsapp(to_number, text):
+    """Envia mensagem usando a versão v18.0 fixada"""
+    url = f"https://graph.facebook.com/v18.0/{PHONE_NUMBER_ID}/messages"
     
     headers = {
         "Authorization": f"Bearer {ACCESS_TOKEN}",
@@ -114,10 +106,6 @@ def enviar_mensagem_whatsapp(to_number, text):
 
     try:
         res = requests.post(url, json=payload, headers=headers)
-        print(f"Resposta do Envio ({res.status_code}): {res.text}")
+        print(f"RESPOSTA DA META ({res.status_code}): {res.text}")
     except Exception as e:
-        print(f"Erro no envio da mensagem: {e}")
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+        print(f"ERRO DE CONEXÃO: {e}")
